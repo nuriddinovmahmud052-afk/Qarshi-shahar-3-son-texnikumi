@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qarshi shahar 3-son texnikumi</title>
+    <!-- FontAwesome Ikonkalar uchun -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #004085;
+            --secondary-color: #007bff;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* HEADER & NAVBAR */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-btn {
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .lang-btn.active, .lang-btn:hover {
+            background: white;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* SIDEBAR / YON MENYU */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.2);
+            transition: 0.3s ease;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .catalog-list {
+            list-style: none;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .catalog-item {
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .catalog-item:hover, .catalog-item.active {
+            background-color: #e9ecef;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .catalog-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .catalog-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+        .catalog-action-btn.edit { color: #ffc107; }
+        .catalog-action-btn.delete { color: #dc3545; }
+
+        .admin-link {
+            background-color: #343a40;
+            color: white !important;
+            margin-top: auto;
+        }
+
+        .admin-badge {
+            background: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1050;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* MAIN CONTENT AREA */
+        container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 0 15px;
+            flex: 1;
+        }
+
+        .section-title {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* CARDS / POSTS GRID */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .post-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #e0e0e0;
+        }
+
+        .post-content {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .post-text {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            white-space: pre-line;
+        }
+
+        .map-frame {
+            width: 100%;
+            height: 200px;
+            border: none;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .btn-edit { background: #ffc107; color: #000; }
+        .btn-delete { background: #dc3545; color: white; }
+        .btn-primary { background: var(--secondary-color); color: white; padding: 10px 20px; font-size: 15px; }
+
+        /* FORM / MODAL */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1200;
+            padding: 15px;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .logo-title span { display: none; }
+            .header-left { gap: 10px; }
+            .section-title { font-size: 20px; flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <div class="logo-title">
+                <img src="https://via.placeholder.com/40" alt="Logo" class="logo-img" id="siteLogo">
+                <span id="titleText">Qarshi shahar 3-son texnikumi</span>
+            </div>
+        </div>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="changeLang('uz')">UZ</button>
+            <button class="lang-btn" onclick="changeLang('ru')">RU</button>
+            <button class="lang-btn" onclick="changeLang('en')">EN</button>
+        </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3 id="menuHeader">Kataloglar</h3>
+            <button class="close-btn" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="catalog-list" id="catalogList"></ul>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <container>
+        <div class="section-title">
+            <h2 id="currentCatalogTitle">Bosh sahifa</h2>
+            <button class="btn btn-primary" id="addPostBtn" style="display: none;" onclick="openPostModal()"><i class="fas fa-plus"></i> Ma'lumot qo'shish</button>
+        </div>
+
+        <div class="posts-grid" id="postsGrid"></div>
+    </container>
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; <span id="year"></span> Qarshi shahar 3-son texnikumi. Barcha huquqlar himoyalangan.
+    </footer>
+
+    <!-- MODAL: POST QO'SHISH / TAHRIRLASH -->
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Yangilik / Ma'lumot qo'shish</h3><br>
+            <form id="postForm">
+                <input type="hidden" id="postId">
+                <div class="form-group">
+                    <label>Qaysi tilda kiritilmoqda?</label>
+                    <select id="postLang">
+                        <option value="uz">O'zbekcha</option>
+                        <option value="ru">Русский</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sarlavha</label>
+                    <input type="text" id="postTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Rasm yuklash (Fayl tanlang yoki havola kiriting)</label>
+                    <input type="file" id="postImgFile" accept="image/*" style="margin-bottom: 5px;">
+                    <input type="url" id="postImg" placeholder="Yoki rasm URL havolasini yozing">
+                </div>
+                <div class="form-group">
+                    <label>Matn / Tavsif</label>
+                    <textarea id="postText" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Google Map Embed URL (Joylashuv ixtiyoriy)</label>
+                    <input type="text" id="postMap" placeholder="<iframe src='...'> yoki src havolasi">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-delete" onclick="closePostModal()">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: KATALOG QO'SHISH / TAHRIRLASH -->
+    <div class="modal" id="catalogModal">
+        <div class="modal-content">
+            <h3 id="catalogModalTitle">Yangi Katalog Qo'shish</h3><br>
+            <form id="catalogForm">
+                <input type="hidden" id="catalogDocId">
+                <div class="form-group">
+                    <label>Katalog nomi (O'zbekcha)</label>
+                    <input type="text" id="catalogNameUz" required>
+                </div>
+                <div class="form-group">
+                    <label>Katalog nomi (Русский)</label>
+                    <input type="text" id="catalogNameRu" required>
+                </div>
+                <div class="form-group">
+                    <label>Katalog nomi (English)</label>
+                    <input type="text" id="catalogNameEn" required>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-delete" onclick="closeCatalogModal()">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: LOGOTIPNI O'ZGARTIRISH -->
+    <div class="modal" id="logoModal">
+        <div class="modal-content">
+            <h3>Logotipni o'zgartirish</h3><br>
+            <form id="logoForm">
+                <div class="form-group">
+                    <label>Logotip faylini tanlang yoki havola kiriting</label>
+                    <input type="file" id="logoFile" accept="image/*" style="margin-bottom: 5px;">
+                    <input type="url" id="logoUrlInput" placeholder="https://example.com/logo.png">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-delete" onclick="closeLogoModal()">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Yangilash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FIREBASE SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfL90eeaAMsqUC4KM-Wx4Gd9u044_GA2Q",
+            authDomain: "qarshi-shahar-3-son-texnikumi.firebaseapp.com",
+            projectId: "qarshi-shahar-3-son-texnikumi",
+            storageBucket: "qarshi-shahar-3-son-texnikumi.firebasestorage.app",
+            messagingSenderId: "453375353581",
+            appId: "1:453375353581:web:50f8ecd50f8acf0551e2e4",
+            measurementId: "G-D754KWP67S"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        let isAdmin = false;
+        let currentCatalogKey = 'home';
+        let currentLang = 'uz';
+        let currentCatalogNames = null;
+
+        const translations = {
+            uz: { menuHeader: "Kataloglar", title: "Qarshi shahar 3-son texnikumi", addBtn: "+ Ma'lumot qo'shish", home: "Bosh sahifa", addCatalogText: "Yangi Katalog qo'shish", noPosts: "Bu katalogda hali ma'lumotlar yo'q." },
+            ru: { menuHeader: "Каталоги", title: "Каршинский техникум №3", addBtn: "+ Добавить информацию", home: "Главная страница", addCatalogText: "Добавить новый каталог", noPosts: "В этом каталоге пока нет информации." },
+            en: { menuHeader: "Catalogs", title: "Qarshi City Technical School No. 3", addBtn: "+ Add Info", home: "Home", addCatalogText: "Add New Catalog", noPosts: "There is no information in this catalog yet." }
+        };
+
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        async function loadLogo() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "settings"));
+                querySnapshot.forEach((docSnap) => {
+                    let data = docSnap.data();
+                    if (data.logo) {
+                        document.getElementById('siteLogo').src = data.logo;
+                    }
+                });
+            } catch (e) {
+                console.log("Logotip yuklanmoqda...");
+            }
+        }
+
+        async function loadCatalogs() {
+            const catalogList = document.getElementById('catalogList');
+            catalogList.innerHTML = '';
+
+            let catalogs = [{ id: 'home', name: translations[currentLang].home, isHome: true }];
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "catalogs"));
+                querySnapshot.forEach((docSnap) => {
+                    let data = docSnap.data();
+                    let names = {
+                        uz: data.nameUz || data.name || '',
+                        ru: data.nameRu || data.name || '',
+                        en: data.nameEn || data.name || ''
+                    };
+                    let displayName = names[currentLang] || names.uz;
+
+                    catalogs.push({ 
+                        id: docSnap.id, 
+                        names: names, 
+                        displayName: displayName, 
+                        isHome: false 
+                    });
+                });
+            } catch (e) {
+                console.log("Kataloglar bazasi yuklanmoqda...");
+            }
+
+            catalogs.forEach(cat => {
+                const li = document.createElement('li');
+                li.className = `catalog-item ${cat.id === currentCatalogKey ? 'active' : ''}`;
+                
+                let nameSpan = document.createElement('span');
+                nameSpan.innerText = cat.isHome ? translations[currentLang].home : cat.displayName;
+                nameSpan.style.flex = '1';
+                nameSpan.onclick = () => selectCatalog(cat.id, cat.isHome ? translations[currentLang].home : cat.displayName, cat.names);
+                li.appendChild(nameSpan);
+
+                if (isAdmin && !cat.isHome) {
+                    let actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'catalog-actions';
+
+                    let editBtn = document.createElement('button');
+                    editBtn.className = 'catalog-action-btn edit';
+                    editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+                    editBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        openCatalogModal(cat.id, cat.names);
+                    };
+
+                    let deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'catalog-action-btn delete';
+                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteCatalog(cat.id, cat.displayName);
+                    };
+
+                    actionsDiv.appendChild(editBtn);
+                    actionsDiv.appendChild(deleteBtn);
+                    li.appendChild(actionsDiv);
+                }
+
+                catalogList.appendChild(li);
+            });
+
+            if (isAdmin) {
+                const addLi = document.createElement('li');
+                addLi.className = 'catalog-item';
+                addLi.style.color = 'var(--secondary-color)';
+                addLi.innerHTML = `<span><i class="fas fa-plus-circle"></i> ${translations[currentLang].addCatalogText}</span>`;
+                addLi.onclick = () => openCatalogModal();
+                catalogList.appendChild(addLi);
+            }
+
+            const adminLi = document.createElement('li');
+            adminLi.className = 'catalog-item admin-link';
+            adminLi.innerHTML = `
+                <span><i class="fas fa-user-lock"></i> Admin Panel</span>
+                <span class="admin-badge" id="adminBadge" style="display: ${isAdmin ? 'inline' : 'none'};">Faol</span>
+            `;
+            adminLi.onclick = window.promptAdmin;
+            catalogList.appendChild(adminLi);
+        }
+
+        window.selectCatalog = (catKey, displayName, names = null) => {
+            currentCatalogKey = catKey;
+            currentCatalogNames = names;
+            document.getElementById('currentCatalogTitle').innerText = displayName;
+            closeSidebar();
+            loadCatalogs();
+            loadPosts();
+        };
+
+        async function loadPosts() {
+            const postsGrid = document.getElementById('postsGrid');
+            postsGrid.innerHTML = '<p>Yuklanmoqda...</p>';
+
+            let dbQueryCatalog = (currentCatalogKey === 'home') ? 'Bosh sahifa' : (currentCatalogNames ? currentCatalogNames.uz : currentCatalogKey);
+
+            try {
+                const q = query(collection(db, "posts"), where("catalog", "==", dbQueryCatalog));
+                const querySnapshot = await getDocs(q);
+                postsGrid.innerHTML = '';
+
+                let postsFound = false;
+
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+
+                    let postLang = data.lang || 'uz';
+                    if (postLang !== currentLang) return;
+
+                    postsFound = true;
+                    const card = document.createElement('div');
+                    card.className = 'post-card';
+
+                    let imgHtml = data.img ? `<img src="${data.img}" class="post-img" alt="Post">` : '';
+                    let mapHtml = '';
+
+                    if(data.map) {
+                        let srcMatch = data.map.match(/src=["']([^"']+)["']/);
+                        let mapUrl = srcMatch ? srcMatch[1] : data.map;
+                        mapHtml = `<iframe src="${mapUrl}" class="map-frame" loading="lazy"></iframe>`;
+                    }
+
+                    card.innerHTML = `
+                        ${imgHtml}
+                        <div class="post-content">
+                            <h3 class="post-title">${data.title}</h3>
+                            <p class="post-text">${data.text}</p>
+                            ${mapHtml}
+                            <div class="admin-actions-container"></div>
+                        </div>
+                    `;
+
+                    if (isAdmin) {
+                        const actionsDiv = card.querySelector('.admin-actions-container');
+                        const adminBtns = document.createElement('div');
+                        adminBtns.className = 'admin-actions';
+                        
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'btn btn-edit';
+                        editBtn.innerHTML = '<i class="fas fa-edit"></i> Tahrirlash';
+                        editBtn.onclick = () => editPost(id, data.title, data.text, data.img || '', data.map || '', postLang);
+
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'btn btn-delete';
+                        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> O\'chirish';
+                        deleteBtn.onclick = () => deletePost(id);
+
+                        adminBtns.appendChild(editBtn);
+                        adminBtns.appendChild(deleteBtn);
+                        actionsDiv.appendChild(adminBtns);
+                    }
+
+                    postsGrid.appendChild(card);
+                });
+
+                if(!postsFound) {
+                    postsGrid.innerHTML = `<p>${translations[currentLang].noPosts}</p>`;
+                }
+            } catch (e) {
+                console.error(e);
+                postsGrid.innerHTML = '<p>Ma\'lumotlarni yuklashda xatolik yuz berdi.</p>';
+            }
+        }
+
+        window.promptAdmin = () => {
+            if (isAdmin) {
+                let choice = confirm("Admin paneldan chiqish yoki logotipni o'zgartirish?\n[OK] - Logotipni o'zgartirish\n[Bekor qilish] - Chiqish");
+                if (choice) {
+                    openLogoModal();
+                } else {
+                    isAdmin = false;
+                    document.getElementById('addPostBtn').style.display = 'none';
+                    alert("Admin rejimidan chiqildi!");
+                    closeSidebar();
+                    loadCatalogs();
+                    loadPosts();
+                }
+                return;
+            }
+            let code = prompt("Admin kodini kiriting:");
+            if (code === "2907") {
+                isAdmin = true;
+                document.getElementById('addPostBtn').style.display = 'block';
+                alert("Xush kelibsiz, Admin! (Logotipni o'zgartirish uchun yana Admin Panel ustiga bosing)");
+                closeSidebar();
+                loadCatalogs();
+                loadPosts();
+            } else if (code !== null) {
+                alert("Kod noto'g'ri!");
+            }
+        };
+
+        document.getElementById('postForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('postId').value;
+            const title = document.getElementById('postTitle').value;
+            const text = document.getElementById('postText').value;
+            const map = document.getElementById('postMap').value;
+            const lang = document.getElementById('postLang').value;
+            let img = document.getElementById('postImg').value;
+
+            const fileInput = document.getElementById('postImgFile');
+            
+            let savePostData = async (imageUrl) => {
+                let targetCatalog = (currentCatalogKey === 'home') ? 'Bosh sahifa' : (currentCatalogNames ? currentCatalogNames.uz : currentCatalogKey);
+                const postData = {
+                    catalog: targetCatalog,
+                    title: title,
+                    text: text,
+                    img: imageUrl || img,
+                    map: map,
+                    lang: lang,
+                    updatedAt: new Date()
+                };
+
+                if (id) {
+                    await updateDoc(doc(db, "posts", id), postData);
+                } else {
+                    await addDoc(collection(db, "posts"), postData);
+                }
+
+                closePostModal();
+                loadPosts();
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = async function(uploadEvent) {
+                    await savePostData(uploadEvent.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                await savePostData(img);
+            }
+        };
+
+        window.editPost = (id, title, text, img, map, lang) => {
+            document.getElementById('postId').value = id;
+            document.getElementById('postTitle').value = title;
+            document.getElementById('postText').value = text;
+            document.getElementById('postImg').value = img;
+            document.getElementById('postMap').value = map;
+            document.getElementById('postLang').value = lang || 'uz';
+            document.getElementById('modalTitle').innerText = "Ma'lumotni tahrirlash";
+            document.getElementById('postModal').classList.add('active');
+        };
+
+        window.deletePost = async (id) => {
+            if (confirm("Ushbu ma'lumotni o'chirishni xohlaysizmi?")) {
+                await deleteDoc(doc(db, "posts", id));
+                loadPosts();
+            }
+        };
+
+        document.getElementById('catalogForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const docId = document.getElementById('catalogDocId').value;
+            const nameUz = document.getElementById('catalogNameUz').value;
+            const nameRu = document.getElementById('catalogNameRu').value;
+            const nameEn = document.getElementById('catalogNameEn').value;
+
+            const catalogData = {
+                nameUz: nameUz,
+                nameRu: nameRu,
+                nameEn: nameEn,
+                name: nameUz
+            };
+
+            if (docId) {
+                await updateDoc(doc(db, "catalogs", docId), catalogData);
+                if (currentCatalogKey === docId) {
+                    let names = { uz: nameUz, ru: nameRu, en: nameEn };
+                    currentCatalogNames = names;
+                    document.getElementById('currentCatalogTitle').innerText = names[currentLang];
+                }
+            } else {
+                await addDoc(collection(db, "catalogs"), catalogData);
+            }
+
+            closeCatalogModal();
+            loadCatalogs();
+        };
+
+        window.deleteCatalog = async (id, name) => {
+            if (confirm(`"${name}" katalogini o'chirishni xohlaysizmi?`)) {
+                await deleteDoc(doc(db, "catalogs", id));
+                if (currentCatalogKey === id) {
+                    currentCatalogKey = 'home';
+                    currentCatalogNames = null;
+                    document.getElementById('currentCatalogTitle').innerText = translations[currentLang].home;
+                }
+                loadCatalogs();
+                loadPosts();
+            }
+        };
+
+        document.getElementById('logoForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('logoFile');
+            const urlInput = document.getElementById('logoUrlInput').value;
+
+            let saveLogo = async (logoSrc) => {
+                try {
+                    const querySnapshot = await getDocs(collection(db, "settings"));
+                    let settingDocId = null;
+                    querySnapshot.forEach((docSnap) => {
+                        settingDocId = docSnap.id;
+                    });
+
+                    if (settingDocId) {
+                        await updateDoc(doc(db, "settings", settingDocId), { logo: logoSrc });
+                    } else {
+                        await addDoc(collection(db, "settings"), { logo: logoSrc });
+                    }
+
+                    document.getElementById('siteLogo').src = logoSrc;
+                    alert("Logotip muvaffaqiyatli yangilandi!");
+                    closeLogoModal();
+                } catch (err) {
+                    console.error(err);
+                    alert("Xatolik yuz berdi!");
+                }
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    await saveLogo(e.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else if (urlInput) {
+                await saveLogo(urlInput);
+            } else {
+                alert("Iltimos, rasm tanlang yoki havola kiriting!");
+            }
+        };
+
+        window.changeLang = (lang) => {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('titleText').innerText = translations[lang].title;
+            document.getElementById('menuHeader').innerText = translations[lang].menuHeader;
+            document.getElementById('addPostBtn').innerText = translations[lang].addBtn;
+
+            if (currentCatalogKey === 'home') {
+                document.getElementById('currentCatalogTitle').innerText = translations[lang].home;
+            } else if (currentCatalogNames) {
+                document.getElementById('currentCatalogTitle').innerText = currentCatalogNames[lang] || currentCatalogNames.uz;
+            }
+
+            loadCatalogs();
+            loadPosts();
+        };
+
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        };
+
+        window.closeSidebar = () => {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        };
+
+        window.openPostModal = () => {
+            document.getElementById('postForm').reset();
+            document.getElementById('postId').value = '';
+            document.getElementById('postLang').value = currentLang;
+            document.getElementById('modalTitle').innerText = "Yangi Ma'lumot qo'shish";
+            document.getElementById('postModal').classList.add('active');
+        };
+
+        window.closePostModal = () => document.getElementById('postModal').classList.remove('active');
+        
+        window.openCatalogModal = (id = '', names = null) => {
+            document.getElementById('catalogForm').reset();
+            document.getElementById('catalogDocId').value = id;
+            document.getElementById('catalogNameUz').value = names ? (names.uz || '') : '';
+            document.getElementById('catalogNameRu').value = names ? (names.ru || '') : '';
+            document.getElementById('catalogNameEn').value = names ? (names.en || '') : '';
+            document.getElementById('catalogModalTitle').innerText = id ? "Katalogni tahrirlash" : "Yangi Katalog Qo'shish";
+            document.getElementById('catalogModal').classList.add('active');
+        };
+        window.closeCatalogModal = () => document.getElementById('catalogModal').classList.remove('active');
+
+        window.openLogoModal = () => {
+            document.getElementById('logoForm').reset();
+            document.getElementById('logoModal').classList.add('active');
+        };
+        window.closeLogoModal = () => document.getElementById('logoModal').classList.remove('active');
+
+        // Boshlang'ich yuklash
+        loadLogo();
+        loadCatalogs();
+        loadPosts();
+    </script>
+</body>
+</html>
